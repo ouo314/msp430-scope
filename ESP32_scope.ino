@@ -1,8 +1,9 @@
+// Development Log: Debugging and testing hardware. The ADC seems to have some issues; I might need a 1uF capacitor to filter out noise.
 #include <driver/adc.h>
 #include "esp_adc_cal.h"
 
 const int pwmPin = 39;
-const int pwmFrequency = 10;  
+const int pwmFrequency = 1;  
 const int pwmResolution = 8;
 const int samplesPerStep = 50;
 
@@ -33,6 +34,7 @@ void loop() {
     Serial.print(i);
     Serial.print(" ADC: ");
     Serial.println(scaledAdcValue);
+    delay(10);
   }
 
   delay(100);
