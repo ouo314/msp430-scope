@@ -1,4 +1,4 @@
-
+#include <msp430.h> 
 
 void initADC() {
     ADCCTL0 &= ~ADCENC;
@@ -6,6 +6,12 @@ void initADC() {
     ADCCTL1 = ADCSHP;
     ADCCTL2 = ADCRES_2;
     ADCMCTL0 = ADCINCH_0;
+}
+
+void initTimer() {
+    TA0CCR0 = 1024;
+    TA0CCTL0 = CCIE;
+    TA0CTL = TASSEL_2 | MC_1;
 }
 
 #pragma vector=TIMER0_A0_VECTOR
@@ -28,10 +34,21 @@ void sendUART(uint16_t data) {
     UCA0TXBUF = (data >> 8) & 0xFF;
 }
 
+#pragma vector=ADC_VECTOR
+__interrupt void ADC_ISR(void) {
+    uint16_t adcValue = ADCMEM0;
+    sendUART(adcValue);
+}
 
-int main(void)
-{
+int main(void) {
     WDTCTL = WDTPW | WDTHOLD;
+    initADC();
+    initTimer();
+    initUART();
 
-	return 0;
+    __bis_SR_register(GIE);
+
+    while (1) {
+        __low_power_mode_0();
+    }
 }
