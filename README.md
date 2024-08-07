@@ -1,1 +1,1 @@
-a msp430 scope
+a scope
